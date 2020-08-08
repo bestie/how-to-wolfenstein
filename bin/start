@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require_relative "../game/env"
+require "io/console"
+
+level = File.read("game/levels/level1.txt")
+
+IO.console.raw do |io|
+  game = Game.new(
+    io: io,
+    map: Map.from_string(level),
+    log: File.open("log", "w"),
+  )
+
+  game.start
+end
