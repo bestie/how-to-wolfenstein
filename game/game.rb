@@ -16,6 +16,7 @@ class Game
     until ctrl_c? do
       get_input
       update_game_state
+      render_frame
     end
   end
 
@@ -29,10 +30,14 @@ class Game
   end
 
   def render_frame
+    output_buffer = []
+    output_buffer <<  "Input buffer: #{@input_buffer.last(10)}"
     map.rows.each do |row|
-      io.write(row.join + "\r\n")
+      output_buffer << (row.join)
     end
-    io.write(27.chr + "[" + map.rows.length.to_s + "A")
+
+    output_buffer.each { |line| io.write(line + "\r\n") }
+    io.write(27.chr + "[" + output_buffer.length.to_s + "A")
   end
 
   def ctrl_c?
