@@ -97,6 +97,31 @@ RSpec.describe Map do
     end
   end
 
+  describe "#wall?" do
+    context "when position is inside a wall element" do
+      it "returns true" do
+        expect(map.wall?(Vector[0.9, 0.9])).to be true
+        expect(map.wall?(Vector[1.0, 4.1])).to be true
+        expect(map.wall?(Vector[8.0, 0.9])).to be true
+      end
+    end
+
+    context "when position is inside the goal element" do
+      it "returns true" do
+        expect(map.wall?(Vector[8.1, 2.1])).to be true
+        expect(map.wall?(Vector[8.9, 2.9])).to be true
+      end
+    end
+
+    context "when position is not inside wall element" do
+      it "returns false" do
+        expect(map.wall?(Vector[1.0, 1.0])).to be false
+        expect(map.wall?(Vector[1.0, 3.9])).to be false
+        expect(map.wall?(Vector[7.9, 1.5])).to be false
+      end
+    end
+  end
+
   let(:level_string) do
 """
 #########

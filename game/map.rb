@@ -2,6 +2,7 @@ class Map
   PLAYER = "O"
   START_POSITION = "X"
   GOAL = "G"
+  WALL = "#"
 
   module Arrows
     NORTH = "↑"
@@ -42,6 +43,11 @@ class Map
 
   def goal?(position)
     position.to_a.map(&:floor) == goal_position.to_a
+  end
+
+  def wall?(position)
+    x,y = position.to_a.map(&:floor)
+    rows[y][x] == WALL || rows[y][x] == GOAL
   end
 
   private
