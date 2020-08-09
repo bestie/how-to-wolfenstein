@@ -1,6 +1,7 @@
 class Map
   PLAYER = "O"
   START_POSITION = "X"
+  GOAL = "G"
 
   module Arrows
     NORTH = "↑"
@@ -39,7 +40,19 @@ class Map
     Vector[x, y]
   end
 
+  def goal?(position)
+    position.to_a.map(&:floor) == goal_position.to_a
+  end
+
   private
+
+  def goal_position
+    row = rows.detect { |row| row.include?(GOAL) }
+    x = row.index(GOAL)
+    y = rows.index(row)
+
+    Vector[x, y]
+  end
 
   def angle_to_arrow(angle)
     if (0.0..π/4.0).cover?(angle)

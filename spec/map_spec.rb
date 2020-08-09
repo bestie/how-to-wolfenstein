@@ -79,11 +79,29 @@ RSpec.describe Map do
     end
   end
 
+  describe "#goal?" do
+    context "when the given position is within the goal cell" do
+      it "returns true" do
+        expect(map.goal?(Vector[8.0, 2.0])).to be true
+        expect(map.goal?(Vector[8.9, 2.9])).to be true
+      end
+    end
+
+    context "when the given position is outside the goal cell" do
+      it "returns false" do
+        expect(map.goal?(Vector[7.9, 1.9])).to be false
+        expect(map.goal?(Vector[8.1, 1.9])).to be false
+        expect(map.goal?(Vector[9.1, 2.1])).to be false
+        expect(map.goal?(Vector[8.1, 3.1])).to be false
+      end
+    end
+  end
+
   let(:level_string) do
 """
 #########
 #       #
-#   X   #
+#   X   G
 #       #
 #########
 """

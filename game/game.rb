@@ -5,6 +5,7 @@ class Game
     @player = player
     @log = log
 
+    @over = false
     @input_buffer = []
     @player.position = map.player_start_position
   end
@@ -17,13 +18,17 @@ class Game
 
     io.write(ANSI.save_terminal_state)
 
-    until ctrl_c? do
+    until @over do
       get_input
       update_game_state
       render_frame
     end
 
     io.write(ANSI.restore_terminal_state)
+  end
+
+  def stop
+    @over = true
   end
 
   private
@@ -42,6 +47,8 @@ class Game
       player.walk_back
     when "d"
       player.strafe_right
+    when ANSI.ctrl_c
+      stop
     end
 
     case @input_buffer.last(3).join
@@ -64,11 +71,18 @@ class Game
         output_buffer << (row.join)
       end
 
-    output_buffer.each { |line| io.write(line + "\r\n") }
+    if map.goal?(player.position)
+      output_buffer = win_frame
+      output_buffer.each { |line| io.write(line + "\r\n") }
+      sleep(2)
+    else
+      output_buffer.each { |line| io.write(line + "\r\n") }
+    end
+
     io.write(ANSI.cursor_up(output_buffer.length))
   end
 
-  def ctrl_c?
-    @input_buffer.last == ANSI.ctrl_c
+  def win_frame
+    ["\u{1F645} " * 40] * 33
   end
 end
