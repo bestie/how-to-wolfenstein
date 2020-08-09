@@ -28,16 +28,54 @@ RSpec.describe Map do
   end
 
   describe "#overlay_player" do
-    let(:player_position) { Vector[2.3, 2.8] }
-    let(:position2) { Vector[3.3, 2.8] }
+    let(:position) { Vector[2.3, 2.8] }
+    let(:angle) { 0.0 }
 
-    it "returns a new map with updated player position" do
-      expect(map.overlay_player(player_position).rows[2][2]).to eq("O")
+    it "does not mutate the existing map" do
+      expect { map.overlay_player(position, angle) }
+        .not_to change { map.rows[2, 2] }
     end
 
-    it "does not leave mutated the previous map" do
-      expect { map.overlay_player(player_position) }
-        .not_to change { map.rows[2, 2] }
+    it "returns a new map with updated player position" do
+      overlay_char = map.overlay_player(position, angle).rows[2][2]
+
+      expect(overlay_char).to eq(Map::Arrows::NORTH)
+    end
+
+    context "when player faces north" do
+      let(:angle) { 0.0 }
+      it "substitutes an up arrow" do
+        overlay_char = map.overlay_player(position, angle).rows[2][2]
+
+        expect(overlay_char).to eq(Map::Arrows::NORTH)
+      end
+    end
+
+    context "when player faces east" do
+      let(:angle) { π / 2.0 }
+      it "substitutes an right arrow" do
+        overlay_char = map.overlay_player(position, angle).rows[2][2]
+
+        expect(overlay_char).to eq(Map::Arrows::EAST)
+      end
+    end
+
+    context "when player faces south" do
+      let(:angle) { π }
+      it "substitutes an right arrow" do
+        overlay_char = map.overlay_player(position, angle).rows[2][2]
+
+        expect(overlay_char).to eq(Map::Arrows::SOUTH)
+      end
+    end
+
+    context "when player faces west" do
+      let(:angle) { π * 3 / 2.0 }
+      it "substitutes an right arrow" do
+        overlay_char = map.overlay_player(position, angle).rows[2][2]
+
+        expect(overlay_char).to eq(Map::Arrows::WEST)
+      end
     end
   end
 

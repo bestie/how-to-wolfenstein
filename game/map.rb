@@ -2,6 +2,13 @@ class Map
   PLAYER = "O"
   START_POSITION = "X"
 
+  module Arrows
+    NORTH = "↑"
+    EAST = "→"
+    SOUTH = "↓"
+    WEST = "←"
+  end
+
   class << self
     def from_string(string)
       new(string.strip.split("\n").map(&:chars))
@@ -14,12 +21,12 @@ class Map
 
   attr_reader :rows, :player_start_position
 
-  def overlay_player(position)
+  def overlay_player(position, angle)
     x = position.x.floor
     y = position.y.floor
 
     new_row = rows[y].clone
-    new_row[x] = PLAYER
+    new_row[x] = angle_to_arrow(angle)
 
     self.class.new(rows[0..y-1] + [new_row] + rows[y+1..-1])
   end
@@ -30,5 +37,21 @@ class Map
     y = rows.index(row) + 0.5
 
     Vector[x, y]
+  end
+
+  private
+
+  def angle_to_arrow(angle)
+    if (0.0..π/4.0).cover?(angle)
+      Arrows::NORTH
+    elsif (π/4.0..3*π/4.0).cover?(angle)
+      Arrows::EAST
+    elsif (3*π/4.0..5*π/4.0).cover?(angle)
+      Arrows::SOUTH
+    elsif (5*π/4.0..7.0*π/4.0).cover?(angle)
+      Arrows::WEST
+    elsif (7*π/4.0..2.0*π).cover?(angle)
+      Arrows::NORTH
+    end
   end
 end

@@ -58,7 +58,7 @@ class Game
     output_buffer <<  "Player angle: #{@player.angle * π / 180.0}"
 
     map
-      .overlay_player(@player.position)
+      .overlay_player(@player.position, @player.angle)
       .rows.each do |row|
         output_buffer << (row.join)
       end

@@ -1,7 +1,7 @@
 require "vector"
 
 class Player
-  def initialize(position: Vector[0.0, 0.0], angle: 0.0, speed: 1.0, turn_rate: 0.2)
+  def initialize(position: Vector[0.0, 0.0], angle: 0.0, speed: 1.0, turn_rate: π/8.0)
     @position = position
     @angle = angle
     @speed = speed
@@ -27,11 +27,14 @@ class Player
   end
 
   def turn_left
-    @angle -= @turn_rate
+    puts @angle
+    puts @turn_rate
+
+    @angle = (@angle - @turn_rate) % (2*π)
   end
 
   def turn_right
-    @angle += @turn_rate
+    @angle = (@angle + @turn_rate) % (2*π)
   end
 
   private

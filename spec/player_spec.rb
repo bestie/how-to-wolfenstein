@@ -13,7 +13,7 @@ RSpec.describe Player do
   let(:speed) { 1.0 }
   let(:origin) { Vector[0, 0] }
   let(:angle) { 0 }
-  let(:turn_rate) { 0.2 }
+  let(:turn_rate) { π / 8.0 }
   let(:unit_length_45_deg) { Math.sqrt(0.5) }
 
   describe "#walk_forward" do
@@ -147,18 +147,40 @@ RSpec.describe Player do
   end
 
   describe "#turn_left" do
+    let(:angle) { π }
+
     it "decreases the angle by the turn rate" do
       expect { player.turn_left }
         .to change { player.angle }
         .by(-turn_rate)
     end
+
+    context "when the angle becomes less than 0" do
+      let(:angle) { 1/16.0 * π }
+
+      it "wraps the angle around 2π" do
+        player.turn_left
+        expect(player.angle).to be_within(10**-6).of (31/16.0 * π)
+      end
+    end
   end
 
   describe "#turn_right" do
+    let(:angle) { π }
+
     it "increases the angle by the turn rate" do
       expect { player.turn_right }
         .to change { player.angle }
         .by(turn_rate)
+    end
+
+    context "when the angle becomes more than 2π" do
+      let(:angle) { 2 * π }
+
+      it "wraps the angle around 2π" do
+        player.turn_right
+        expect(player.angle).to be_within(10**-6).of (turn_rate)
+      end
     end
   end
 end
