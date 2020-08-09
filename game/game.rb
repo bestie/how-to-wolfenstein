@@ -14,9 +14,11 @@ class Game
   private     :io, :map, :player, :log
 
   def start
+    @canvas_size = io.winsize
     render_frame
 
     io.write(ANSI.save_terminal_state)
+    io.write(ANSI.cursor_top_left)
 
     until @over do
       get_input
@@ -60,6 +62,8 @@ class Game
   end
 
   def render_frame
+    io.write(ANSI.cursor_top_left)
+
     output_buffer = []
     output_buffer <<  "Input buffer: #{@input_buffer.last(10)}"
     output_buffer <<  "Player position: #{@player.position.to_a}"
@@ -78,11 +82,17 @@ class Game
     else
       output_buffer.each { |line| io.write(line + "\r\n") }
     end
-
-    io.write(ANSI.cursor_up(output_buffer.length))
   end
 
   def win_frame
-    ["\u{1F645} " * 40] * 33
+    ["\u{1F645} " * canvas_width] * canvas_height
+  end
+
+  def canvas_width
+    @canvas_size[0]
+  end
+
+  def canvas_height
+    @canvas_size[1]
   end
 end

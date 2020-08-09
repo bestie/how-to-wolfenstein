@@ -16,4 +16,8 @@ class DemoIOAdapter
     @cursor += 1
     char || ANSI.ctrl_c
   end
+
+  def winsize
+    [80, 40]
+  end
 end

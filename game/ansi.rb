@@ -21,6 +21,10 @@ module ANSI
     escape("#{n}A")
   end
 
+  def cursor_top_left
+    escape("1;1H")
+  end
+
   def ctrl_c
     3.chr
   end
