@@ -14,7 +14,7 @@ class Map
 
   attr_reader :rows, :player_start_position
 
-  def with_player(position)
+  def overlay_player(position)
     x = position.x.floor
     y = position.y.floor
 
@@ -29,6 +29,6 @@ class Map
     x = row.index(START_POSITION) + 0.5
     y = rows.index(row) + 0.5
 
-    [x, y]
+    Vector[x, y]
   end
 end

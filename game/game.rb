@@ -6,7 +6,7 @@ class Game
     @log = log
 
     @input_buffer = []
-    @player.position = Vector[0,0]
+    @player.position = map.player_start_position
   end
 
   attr_reader :io, :map, :player, :log
@@ -45,9 +45,12 @@ class Game
     output_buffer = []
     output_buffer <<  "Input buffer: #{@input_buffer.last(10)}"
     output_buffer <<  "Player position: #{@player.position.to_a}"
-    map.rows.each do |row|
-      output_buffer << (row.join)
-    end
+
+    map
+      .overlay_player(@player.position)
+      .rows.each do |row|
+        output_buffer << (row.join)
+      end
 
     output_buffer.each { |line| io.write(line + "\r\n") }
     io.write(27.chr + "[" + output_buffer.length.to_s + "A")

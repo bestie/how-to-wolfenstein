@@ -23,25 +23,21 @@ RSpec.describe Map do
 
   describe "#player_start_position" do
     it "returns the floating point centre position of denoted by `X`" do
-      expect(map.player_start_position).to eq([4.5, 2.5])
+      expect(map.player_start_position).to eq(Vector[4.5, 2.5])
     end
   end
 
-  describe "#with_player" do
+  describe "#overlay_player" do
     let(:player_position) { Vector[2.3, 2.8] }
     let(:position2) { Vector[3.3, 2.8] }
 
     it "returns a new map with updated player position" do
-      expect(map.with_player(player_position).rows[2][2]).to eq("O")
+      expect(map.overlay_player(player_position).rows[2][2]).to eq("O")
     end
 
     it "does not leave mutated the previous map" do
-      expect(
-        map
-          .with_player(player_position)
-          .with_player(position2)
-          .rows[2][2]
-      ).to eq(" ")
+      expect { map.overlay_player(player_position) }
+        .not_to change { map.rows[2, 2] }
     end
   end
 
