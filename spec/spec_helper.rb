@@ -28,4 +28,16 @@ RSpec.configure do |config|
   config.order = :random
 
   Kernel.srand config.seed
+
+  module Helpers
+    # Stdlib Vector will match with array :)
+    def match_vector(x, y)
+      match([
+        within(10**-6).of(x),
+        within(10**-6).of(y),
+      ])
+    end
+  end
+
+  config.include(Helpers)
 end
