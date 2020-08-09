@@ -27,9 +27,6 @@ class Player
   end
 
   def turn_left
-    puts @angle
-    puts @turn_rate
-
     @angle = (@angle - @turn_rate) % (2*π)
   end
 
