@@ -14,13 +14,13 @@ RSpec.describe Player do
   let(:angle) { 0 }
   let(:unit_length_45_deg) { Math.sqrt(0.5) }
 
-  describe "#move_forward" do
+  describe "#walk_forward" do
     context "facing south" do
       let(:angle) { π }
       let(:speed) { 2.0 }
 
       it "increments the y position by the speed" do
-        expect { player.move_forward }
+        expect { player.walk_forward }
           .to change { player.position }
           .to match_vector(0, speed)
       end
@@ -32,7 +32,7 @@ RSpec.describe Player do
       it "increments the position by the unit vector in the direction of gaze" do
         new_position = Vector[unit_length_45_deg, unit_length_45_deg]
 
-        expect { player.move_forward }
+        expect { player.walk_forward }
           .to change { player.position }
           .from([0, 0])
           .to match_vector(*new_position)
@@ -40,13 +40,13 @@ RSpec.describe Player do
     end
   end
 
-  describe "#move_back" do
+  describe "#walk_back" do
     context "facing south" do
       let(:angle) { π }
       let(:speed) { 3.0 }
 
       it "decrements the y position by the speed" do
-        expect { player.move_back }
+        expect { player.walk_back }
           .to change { player.position }
           .to match_vector(0, -speed)
       end
@@ -58,7 +58,7 @@ RSpec.describe Player do
       it "decrements the position by the unit vector in the direction of gaze" do
         new_position = Vector[-unit_length_45_deg, -unit_length_45_deg]
 
-        expect { player.move_back }
+        expect { player.walk_back }
           .to change { player.position }
           .from([0, 0])
           .to match_vector(*new_position)
@@ -66,13 +66,13 @@ RSpec.describe Player do
     end
   end
 
-  describe "#move_left" do
+  describe "#strafe_left" do
     context "facing south" do
       let(:angle) { π }
       let(:speed) { 4.0 }
 
       it "increments the x position by the speed" do
-        expect { player.move_left }
+        expect { player.strafe_left }
           .to change { player.position }
           .to match_vector(speed, 0)
       end
@@ -84,7 +84,7 @@ RSpec.describe Player do
       it "decrements the position by the unit vector in the direction of gaze" do
         new_position = Vector[unit_length_45_deg, -unit_length_45_deg]
 
-        expect { player.move_left }
+        expect { player.strafe_left }
           .to change { player.position }
           .from([0, 0])
           .to match_vector(*new_position)
@@ -92,13 +92,13 @@ RSpec.describe Player do
     end
   end
 
-  describe "#move_right" do
+  describe "#strafe_right" do
     context "facing south" do
       let(:angle) { π }
       let(:speed) { 5.0 }
 
       it "decrements the x position by the speed" do
-        expect { player.move_right }
+        expect { player.strafe_right }
           .to change { player.position }
           .to match_vector(-speed, 0)
       end
@@ -110,7 +110,7 @@ RSpec.describe Player do
       it "decrements the position by the unit vector in the direction of gaze" do
         new_position = Vector[-unit_length_45_deg, +unit_length_45_deg]
 
-        expect { player.move_right }
+        expect { player.strafe_right }
           .to change { player.position }
           .from([0, 0])
           .to match_vector(*new_position)
@@ -118,13 +118,13 @@ RSpec.describe Player do
     end
   end
 
-  describe "#move_back" do
+  describe "#walk_back" do
     context "facing south" do
       let(:angle) { π }
       let(:speed) { 6.0 }
 
       it "decrements the y position by the speed" do
-        expect { player.move_back }
+        expect { player.walk_back }
           .to change { player.position }
           .to match_vector(0, -speed)
       end
@@ -136,7 +136,7 @@ RSpec.describe Player do
       it "decrements the position by the unit vector in the direction of gaze" do
         new_position = Vector[-unit_length_45_deg, -unit_length_45_deg]
 
-        expect { player.move_back }
+        expect { player.walk_back }
           .to change { player.position }
           .from([0, 0])
           .to match_vector(*new_position)

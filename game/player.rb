@@ -9,19 +9,19 @@ class Player
 
   attr_accessor :position, :angle, :speed
 
-  def move_forward
+  def walk_forward
     @position = @position + (look_unit_vector * speed)
   end
 
-  def move_left
+  def strafe_left
     @position = @position + (left_unit_vector * speed)
   end
 
-  def move_back
+  def walk_back
     @position = @position - (look_unit_vector * speed)
   end
 
-  def move_right
+  def strafe_right
     @position = @position + (right_unit_vector * speed)
   end
 

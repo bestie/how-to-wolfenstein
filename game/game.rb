@@ -31,13 +31,13 @@ class Game
   def update_game_state
     case @input_buffer.last
     when "w"
-      player.move_forward
+      player.walk_forward
     when "a"
-      player.move_left
+      player.strafe_left
     when "s"
-      player.move_back
+      player.walk_back
     when "d"
-      player.move_right
+      player.strafe_right
     end
   end
 
@@ -45,6 +45,7 @@ class Game
     output_buffer = []
     output_buffer <<  "Input buffer: #{@input_buffer.last(10)}"
     output_buffer <<  "Player position: #{@player.position.to_a}"
+    output_buffer <<  "Player angle: #{@player.angle * π / 180.0}"
 
     map
       .overlay_player(@player.position)
