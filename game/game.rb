@@ -1,14 +1,16 @@
 class Game
-  def initialize(io:, map:, log:)
+  def initialize(io:, map:, player:, log:)
     @io = io
     @map = map
+    @player = player
     @log = log
 
     @input_buffer = []
+    @player.position = Vector[0,0]
   end
 
-  attr_reader :io, :map, :log
-  private     :io, :map, :log
+  attr_reader :io, :map, :player, :log
+  private     :io, :map, :player, :log
 
   def start
     render_frame
@@ -27,11 +29,22 @@ class Game
   end
 
   def update_game_state
+    case @input_buffer.last
+    when "w"
+      player.move_forward
+    when "a"
+      player.move_left
+    when "s"
+      player.move_back
+    when "d"
+      player.move_right
+    end
   end
 
   def render_frame
     output_buffer = []
     output_buffer <<  "Input buffer: #{@input_buffer.last(10)}"
+    output_buffer <<  "Player position: #{@player.position.to_a}"
     map.rows.each do |row|
       output_buffer << (row.join)
     end

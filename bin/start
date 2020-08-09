@@ -9,6 +9,7 @@ IO.console.raw do |io|
   game = Game.new(
     io: io,
     map: Map.from_string(level),
+    player: Player.new,
     log: File.open("log", "w"),
   )
 
