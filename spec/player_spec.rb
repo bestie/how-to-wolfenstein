@@ -6,12 +6,14 @@ RSpec.describe Player do
       position: origin,
       speed: speed,
       angle: angle,
+      turn_rate: turn_rate,
     )
   }
 
   let(:speed) { 1.0 }
   let(:origin) { Vector[0, 0] }
   let(:angle) { 0 }
+  let(:turn_rate) { 0.2 }
   let(:unit_length_45_deg) { Math.sqrt(0.5) }
 
   describe "#walk_forward" do
@@ -141,6 +143,22 @@ RSpec.describe Player do
           .from([0, 0])
           .to match_vector(*new_position)
       end
+    end
+  end
+
+  describe "#turn_left" do
+    it "decreases the angle by the turn rate" do
+      expect { player.turn_left }
+        .to change { player.angle }
+        .by(-turn_rate)
+    end
+  end
+
+  describe "#turn_right" do
+    it "increases the angle by the turn rate" do
+      expect { player.turn_right }
+        .to change { player.angle }
+        .by(turn_rate)
     end
   end
 end

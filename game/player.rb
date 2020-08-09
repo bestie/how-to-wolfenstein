@@ -1,10 +1,11 @@
 require "vector"
 
 class Player
-  def initialize(position: Vector[0.0, 0.0], angle: 0.0, speed: 1.0)
+  def initialize(position: Vector[0.0, 0.0], angle: 0.0, speed: 1.0, turn_rate: 0.2)
     @position = position
     @angle = angle
     @speed = speed
+    @turn_rate = turn_rate
   end
 
   attr_accessor :position, :angle, :speed
@@ -23,6 +24,14 @@ class Player
 
   def strafe_right
     @position = @position + (right_unit_vector * speed)
+  end
+
+  def turn_left
+    @angle -= @turn_rate
+  end
+
+  def turn_right
+    @angle += @turn_rate
   end
 
   private
