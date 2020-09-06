@@ -18,6 +18,6 @@ class DemoIOAdapter
   end
 
   def winsize
-    [80, 40]
+    [40, 120]
   end
 end

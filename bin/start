@@ -3,14 +3,21 @@
 require_relative "../game/env"
 require "io/console"
 
+$log = File.open("log", "a")
+$log.sync = true
+
 level = File.read("game/levels/level1.txt")
 
 IO.console.raw do |io|
+  map = Map.from_string(level)
+  tracer = RayTracer.new
+  renderer = ANSIRenderer.to_callable_with(tracer: tracer)
+
   game = Game.new(
     io: io,
-    map: Map.from_string(level),
+    map: map,
     player: Player.new,
-    log: File.open("log", "w"),
+    renderer: renderer,
   )
 
   game.start

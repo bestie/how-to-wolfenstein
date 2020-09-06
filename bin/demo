@@ -4,6 +4,9 @@ require_relative "../game/env"
 require "io/console"
 require "demo_io_adapter"
 
+$log = File.open("log", "a")
+$log.sync = true
+
 level = File.read("game/levels/level1.txt")
 
 char_stream = [
@@ -15,17 +18,22 @@ key_delay = 0.05
 
 IO.console.raw do |io|
   begin
-  demo_io = DemoIOAdapter.new(io, char_stream, delay: key_delay)
+    demo_io = DemoIOAdapter.new(io, char_stream, delay: key_delay)
 
-  game = Game.new(
-    io: demo_io,
-    map: Map.from_string(level),
-    player: Player.new,
-    log: File.open("log", "w"),
-  )
+    map = Map.from_string(level)
+    tracer = RayTracer.new
+    renderer = ANSIRenderer.to_callable_with(tracer: tracer)
 
-  game.start
+    game = Game.new(
+      io: demo_io,
+      map: map,
+      player: Player.new,
+      renderer: renderer,
+    )
+
+    game.start
   rescue => e
     p e
+    p e.backtrace
   end
 end

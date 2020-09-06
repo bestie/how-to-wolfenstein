@@ -1,25 +1,24 @@
 class Game
-  def initialize(io:, map:, player:, log:)
+  def initialize(io:, map:, player:, renderer:)
     @io = io
     @map = map
     @player = player
-    @log = log
+    @renderer = renderer
 
     @over = false
     @input_buffer = []
     @player.position = map.player_start_position
+    @field_of_view = π / 4.0
   end
 
-  attr_reader :io, :map, :player, :log
-  private     :io, :map, :player, :log
+  attr_reader :io, :map, :player, :renderer, :field_of_view
+  private     :io, :map, :player, :renderer, :field_of_view
 
   def start
-    @canvas_size = io.winsize
-    render_frame
-
     io.write(ANSI.save_terminal_state)
-    io.write(ANSI.cursor_top_left)
+    @canvas_size = io.winsize
 
+    render_frame
     until @over do
       get_input
       update_game_state
@@ -65,34 +64,48 @@ class Game
     io.write(ANSI.cursor_top_left)
 
     output_buffer = []
-    output_buffer <<  "Input buffer: #{@input_buffer.last(10)}"
-    output_buffer <<  "Player position: #{@player.position.to_a}"
-    output_buffer <<  "Player angle: #{@player.angle * π / 180.0}"
 
-    map
+    map_hud = map
       .overlay_player(@player.position, @player.angle)
-      .rows.each do |row|
-        output_buffer << (row.join)
-      end
+      .rows
+
+    scene = renderer.call(
+      map: map,
+      field_of_view: field_of_view,
+      position: player.position,
+      angle: player.angle,
+      canvas_width: canvas_width,
+      canvas_height: canvas_height,
+    )
+
+    scene.each { |line_chars| output_buffer << line_chars }
+
+    map_hud.each_with_index do |map_line, i|
+      output_buffer[i] = map_line + output_buffer[i].drop(map_line.length)
+    end
 
     if map.goal?(player.position)
-      output_buffer = win_frame
-      output_buffer.each { |line| io.write(line + "\r\n") }
+      write_buffer(win_frame)
       sleep(2)
+      stop
     else
-      output_buffer.each { |line| io.write(line + "\r\n") }
+      write_buffer(output_buffer)
     end
   end
 
+  def write_buffer(buffer)
+    io.write(buffer.map(&:join).join("\r\n"))
+  end
+
   def win_frame
-    ["\u{1F645} " * canvas_width] * canvas_height
+    canvas_height.times.map { ["\u{1F645}", " "] * canvas_width }
   end
 
   def canvas_width
-    @canvas_size[0]
+    @canvas_size[1]
   end
 
   def canvas_height
-    @canvas_size[1]
+    @canvas_size[0]
   end
 end

@@ -1,0 +1,21 @@
+class RayTracer
+  RESOLUTION = 0.05
+
+  def distance_to_wall(map:, from:, angle:)
+    wall_pos = wall_position(map: map, from: from, angle: angle)
+
+    (wall_pos - from).magnitude
+  end
+
+  def wall_position(map:, from:, angle:)
+    ray = from.clone
+    unit_vector = Vector.from_angle(angle)
+    increment = unit_vector * RESOLUTION
+
+    until map.wall?(ray)
+      ray = ray + increment
+    end
+
+    ray
+  end
+end

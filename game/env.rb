@@ -5,5 +5,7 @@ require "map"
 require "player"
 require "vector"
 require "ansi"
+require "ansi_renderer"
+require "ray_tracer"
 
 define_method("π") { Math::PI }

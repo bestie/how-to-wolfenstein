@@ -23,7 +23,7 @@ RSpec.configure do |config|
     config.default_formatter = "doc"
   end
 
-  config.profile_examples = 10
+  # config.profile_examples = 10
 
   config.order = :random
 
@@ -31,10 +31,10 @@ RSpec.configure do |config|
 
   module Helpers
     # Stdlib Vector will match with array :)
-    def match_vector(x, y)
+    def match_vector(x, y, tolerance: 10**-6)
       match([
-        within(10**-6).of(x),
-        within(10**-6).of(y),
+        within(tolerance).of(x),
+        within(tolerance).of(y),
       ])
     end
   end
