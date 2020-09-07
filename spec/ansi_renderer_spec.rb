@@ -59,7 +59,7 @@ RSpec.describe ANSIRenderer do
       scene = renderer.call
       column = scene.transpose[0]
 
-      expect(column.drop(11).take(18)).to eq(["#"] * 18)
+      expect(column.drop(11).take(18)).to eq([ANSI.black_on_red("%")] * 18)
     end
 
     it "renders the ceiling and floor the same size" do
@@ -78,7 +78,7 @@ RSpec.describe ANSIRenderer do
       scene = renderer.call
       column = scene.transpose[0]
 
-      expect(column).to eq(["#"] * 40)
+      expect(column).to eq([ANSI.black_on_red("=")] * 40)
     end
   end
 
@@ -89,7 +89,7 @@ RSpec.describe ANSIRenderer do
       scene = renderer.call
       column = scene.transpose[0]
 
-      expect(column).to eq(["#"] * 40)
+      expect(column).to eq([ANSI.black_on_red(" ")] * 40)
     end
   end
 
@@ -116,6 +116,6 @@ RSpec.describe ANSIRenderer do
   end
 
   def count_wall_chars(column)
-    column.count { |char| char == "#" }
+    column.count { |char| ANSIRenderer::WALL_GRADIENT.include?(char) }
   end
 end

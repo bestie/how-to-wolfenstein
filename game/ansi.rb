@@ -25,6 +25,14 @@ module ANSI
     escape("1;1H")
   end
 
+  def red(s)
+    escape("40;31m") + s + escape("0m")
+  end
+
+  def black_on_red(s)
+    escape("41;30m") + s + escape("0m")
+  end
+
   def ctrl_c
     3.chr
   end

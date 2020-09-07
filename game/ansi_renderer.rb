@@ -1,5 +1,9 @@
 class ANSIRenderer
   MAX_DEPTH = 10.0
+  GRADIENT = ".-=+*#@%"
+  WALL_GRADIENT = GRADIENT.chars.map { |c| ANSI.red(c) } +
+    GRADIENT.chars.reverse.map { |c| ANSI.black_on_red(c) } +
+    [ANSI.black_on_red(" ")]
 
   def self.to_callable_with(tracer:)
     ->(**args) { self.new(**args.merge(tracer: tracer)).call }
@@ -69,10 +73,10 @@ class ANSIRenderer
   end
 
   def wall_char(distance)
-    if distance > MAX_DEPTH
-      " "
-    else
-      "#"
-    end
+    return " " if distance > MAX_DEPTH
+
+    intensity = 1.0/( (distance/(MAX_DEPTH/2.0))**2 + 1 )
+    shade_index = (intensity * WALL_GRADIENT.length).floor - 1
+    WALL_GRADIENT.fetch(shade_index)
   end
 end
