@@ -21,6 +21,7 @@ class Game
 
   def start
     io.write(ANSI.save_terminal_state)
+    io.write(ANSI.hide_cursor)
     @canvas_size = io.winsize
 
     start_input_thread
@@ -29,11 +30,17 @@ class Game
       render_frame_measured
     end
 
+  rescue => e
+    $log.puts(e.inspect)
+    $log.puts(e.backtrace)
+  ensure
     io.write(ANSI.restore_terminal_state)
+    io.write(ANSI.unhide_cursor)
   end
 
   def stop
     @over = true
+    io.write("\r\n")
   end
 
   private

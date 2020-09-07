@@ -33,6 +33,14 @@ module ANSI
     escape("41;30m") + s + escape("0m")
   end
 
+  def hide_cursor
+    escape("?25l")
+  end
+
+  def unhide_cursor
+    escape("?25h")
+  end
+
   def ctrl_c
     3.chr
   end
