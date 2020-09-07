@@ -1,10 +1,10 @@
 class RayTracer
   RESOLUTION = 0.05
 
-  def distance_to_wall(map:, from:, angle:)
+  def vector_to_wall(map:, from:, angle:)
     wall_pos = wall_position(map: map, from: from, angle: angle)
 
-    (wall_pos - from).magnitude
+    wall_pos - from
   end
 
   def wall_position(map:, from:, angle:)

@@ -33,6 +33,14 @@ module ANSI
     escape("41;30m") + s + escape("0m")
   end
 
+  def green(s)
+    escape("40;32m") + s + escape("0m")
+  end
+
+  def black_on_green(s)
+    escape("42;30m") + s + escape("0m")
+  end
+
   def hide_cursor
     escape("?25l")
   end

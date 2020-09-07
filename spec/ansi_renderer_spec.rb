@@ -15,13 +15,13 @@ RSpec.describe ANSIRenderer do
     )
   }
 
-  let(:map) { double(:map) }
+  let(:map) { double(:map, "wall?" => true, "goal?" => false) }
   let(:field_of_view) { π / 2.0 }
   let(:canvas_width) { 80 }
   let(:canvas_height) { 40 }
-  let(:tracer) { double(:tracer, distance_to_wall: distance_to_wall) }
+  let(:tracer) { double(:tracer, wall_position: wall_position) }
 
-  let(:distance_to_wall) { 4.5 }
+  let(:wall_position) { Vector[0.0, 4.5] }
   let(:position) { Vector[0.0, 0.0] }
   let(:angle) { 0.0 }
 
@@ -33,20 +33,20 @@ RSpec.describe ANSIRenderer do
   end
 
   it "traces the wall distance column" do
-    scene = renderer.call
+    renderer.call
 
-    expect(tracer).to have_received(:distance_to_wall)
+    expect(tracer).to have_received(:wall_position)
       .exactly(canvas_width).times
   end
 
   it "traces the wall distance for each angle in field of view" do
     angles = []
-    allow(tracer).to receive(:distance_to_wall) do |**args|
+    allow(tracer).to receive(:wall_position) do |**args|
       angles.push(args.fetch(:angle))
-      distance_to_wall
+      wall_position
     end
 
-    scene = renderer.call
+    renderer.call
 
     expect(angles.first).to eq(-π/4.0)
     expect(angles.last).to eq(π/4.0)
@@ -72,7 +72,7 @@ RSpec.describe ANSIRenderer do
   end
 
   context "when the column's wall distance is 2.0" do
-    let(:distance_to_wall) { 2.0 }
+    let(:wall_position) { Vector[0.0, 2.0] }
 
     it "renders only wall" do
       scene = renderer.call
@@ -83,7 +83,7 @@ RSpec.describe ANSIRenderer do
   end
 
   context "when the column's wall distance is 0" do
-    let(:distance_to_wall) { 0.0 }
+    let(:wall_position) { Vector[0.0, 0.0] }
 
     it "renders only wall" do
       scene = renderer.call
@@ -94,7 +94,7 @@ RSpec.describe ANSIRenderer do
   end
 
   context "when that column's distance is max drawing distance" do
-    let(:distance_to_wall) { 10 }
+    let(:wall_position) { Vector[0.0, 10.0] }
 
     it "renders the visible wall vertical center" do
       scene = renderer.call
@@ -105,13 +105,26 @@ RSpec.describe ANSIRenderer do
   end
 
   context "when that column's distance is beyond max drawing distance" do
-    let(:distance_to_wall) { 10.1 }
+    let(:wall_position) { Vector[0.0, 10.1] }
 
     it "renders the visible wall vertical center" do
       scene = renderer.call
       column = scene.transpose[0]
 
       expect(count_wall_chars(column)).to eq(0)
+    end
+  end
+
+  context "when that column falls on the goal tile" do
+    let(:wall_position) { Vector[0.0, 1.0] }
+
+    it "renders in green" do
+      allow(map).to receive(:goal?).and_return(true)
+
+      scene = renderer.call
+      column = scene.transpose[0]
+
+      expect(column).to include(ANSI.black_on_green("."))
     end
   end
 

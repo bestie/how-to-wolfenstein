@@ -1,9 +1,16 @@
 class ANSIRenderer
   MAX_DEPTH = 10.0
-  GRADIENT = ".-=+*#@%"
-  WALL_GRADIENT = GRADIENT.chars.map { |c| ANSI.red(c) } +
-    GRADIENT.chars.reverse.map { |c| ANSI.black_on_red(c) } +
+  GRADIENT = ".-=+*#@%".chars
+  WALL_GRADIENT = (
+    GRADIENT.map { |c| ANSI.red(c) } +
+    GRADIENT.reverse.map { |c| ANSI.black_on_red(c) } +
     [ANSI.black_on_red(" ")]
+  )
+  GOAL_GRADIENT = (
+    GRADIENT.map { |c| ANSI.green(c) } +
+    GRADIENT.reverse.map { |c| ANSI.black_on_green(c) } +
+    [ANSI.black_on_green(" ")]
+  )
 
   def self.to_callable_with(tracer:)
     ->(**args) { self.new(**args.merge(tracer: tracer)).call }
@@ -24,15 +31,29 @@ class ANSIRenderer
 
   def call
     scene = field_of_view_range.map { |angle|
-      distance = distance_to_wall(position, angle)
+      wall_pos = tracer.wall_position(map: map, from: position, angle: angle)
+      vector_to_wall = wall_pos - position
 
-      render_column(distance)
+      render_column(vector_to_wall, wall_pos)
     }
 
     scene.transpose
   end
 
   private
+
+  def render_column(vector_to_wall, wall_position)
+    distance = vector_to_wall.magnitude
+    ceiling_projection = ceiling_projection(distance)
+
+    ceiling_char_size  = (ceiling_projection * canvas_height).round
+    floor_char_size = ceiling_char_size
+    wall_char_size = canvas_height - ceiling_char_size - floor_char_size
+
+    [" "] * ceiling_char_size +
+      [wall_char(distance, wall_position)] * wall_char_size +
+      ["."] * floor_char_size
+  end
 
   def field_of_view_range
     half_field = field_of_view / 2.0
@@ -41,18 +62,6 @@ class ANSIRenderer
     rightmost_angle = (angle + half_field)
 
     (leftmost_angle..rightmost_angle).step(column_arc_width)
-  end
-
-  def render_column(distance)
-    ceiling_projection = ceiling_projection(distance)
-
-    ceiling_char_size  = (ceiling_projection * canvas_height).round
-    floor_char_size = ceiling_char_size
-    wall_char_size = canvas_height - ceiling_char_size - floor_char_size
-
-    [" "] * ceiling_char_size +
-      [wall_char(distance)] * wall_char_size +
-      ["."] * floor_char_size
   end
 
   def ceiling_projection(distance)
@@ -68,15 +77,15 @@ class ANSIRenderer
     ].min
   end
 
-  def distance_to_wall(position, angle)
-    tracer.distance_to_wall(map: map, from: position, angle: angle)
-  end
-
-  def wall_char(distance)
+  def wall_char(distance, wall_position)
     return " " if distance > MAX_DEPTH
 
     intensity = 1.0/( (distance/(MAX_DEPTH/2.0))**2 + 1 )
     shade_index = (intensity * WALL_GRADIENT.length).floor - 1
-    WALL_GRADIENT.fetch(shade_index)
+    if map.goal?(wall_position)
+      GOAL_GRADIENT.fetch(shade_index)
+    else
+      WALL_GRADIENT.fetch(shade_index)
+    end
   end
 end
