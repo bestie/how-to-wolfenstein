@@ -1,20 +1,23 @@
 #!/usr/bin/env ruby
 
+require "ruby-prof"
+require "time"
 require_relative "../game/env"
 require "io/console"
 require "demo_io_adapter"
 
 $log = File.open("log", "a")
 $log.sync = true
+$total_frames = 0
 
 level = File.read("game/levels/level1.txt")
 
 char_stream = [
   ANSI.right_arrow * 4,
-  "w" * 40,
+  "w" * 400,
 ].join.chars
 
-key_delay = 0.05
+key_delay = 0.03
 
 IO.console.raw do |io|
   begin
@@ -30,11 +33,17 @@ IO.console.raw do |io|
     game = Game.new(
       io: demo_io,
       map: map,
-      player: Player.new,
+      player: Player.new(speed: 1.0),
       renderer: renderer,
     )
 
+    RubyProf.start
     game.start
+    result = RubyProf.stop
+
+    prof_log = File.open("profs/#{Time.now.iso8601}--#{demo_io.winsize}--#{$total_frames}-frames", "w")
+    printer = RubyProf::FlatPrinter.new(result)
+    printer.print(prof_log)
   rescue => e
     p e
     p e.backtrace

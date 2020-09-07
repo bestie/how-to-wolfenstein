@@ -5,6 +5,7 @@ require "io/console"
 
 $log = File.open("log", "a")
 $log.sync = true
+$total_frames = 0
 
 level = File.read("game/levels/level1.txt")
 

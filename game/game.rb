@@ -87,6 +87,7 @@ class Game
   def render_frame_measured
     @window_timer ||= Time.now.to_f
     @frame_count += 1
+    $total_frames += 1
 
     render_frame
 
