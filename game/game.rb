@@ -133,7 +133,7 @@ class Game
   end
 
   def win_frame
-    canvas_height.times.map { ["\u{1F645}", " "] * canvas_width }
+    canvas_height.times.map { ["\u{1F645} "] * (canvas_width / 2) }
   end
 
   def canvas_width
