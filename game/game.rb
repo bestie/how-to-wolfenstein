@@ -1,7 +1,4 @@
 class Game
-  LEFT_ARROW = [27.chr, "[", "D"]
-  RIGHT_ARROW = [27.chr, "[", "C"]
-
   def initialize(io:, map:, player:, log:)
     @io = io
     @map = map
@@ -18,11 +15,15 @@ class Game
   def start
     render_frame
 
+    io.write(ANSI.save_terminal_state)
+
     until ctrl_c? do
       get_input
       update_game_state
       render_frame
     end
+
+    io.write(ANSI.restore_terminal_state)
   end
 
   private
@@ -43,10 +44,10 @@ class Game
       player.strafe_right
     end
 
-    case @input_buffer.last(3)
-    when LEFT_ARROW
+    case @input_buffer.last(3).join
+    when ANSI.left_arrow
       player.turn_left
-    when RIGHT_ARROW
+    when ANSI.right_arrow
       player.turn_right
     end
   end
@@ -64,10 +65,10 @@ class Game
       end
 
     output_buffer.each { |line| io.write(line + "\r\n") }
-    io.write(27.chr + "[" + output_buffer.length.to_s + "A")
+    io.write(ANSI.cursor_up(output_buffer.length))
   end
 
   def ctrl_c?
-    @input_buffer.last == ?\C-c
+    @input_buffer.last == ANSI.ctrl_c
   end
 end
