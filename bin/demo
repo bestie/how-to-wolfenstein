@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+require_relative "../game/env"
+require "io/console"
+require "demo_io_adapter"
+
+level = File.read("game/levels/level1.txt")
+
+char_stream = [
+  ANSI.right_arrow * 4,
+  "w" * 40,
+].join.chars
+
+key_delay = 0.1
+
+IO.console.raw do |io|
+  begin
+  demo_io = DemoIOAdapter.new(io, char_stream, delay: key_delay)
+
+  game = Game.new(
+    io: demo_io,
+    map: Map.from_string(level),
+    player: Player.new,
+    log: File.open("log", "w"),
+  )
+
+  game.start
+  rescue => e
+    p e
+  end
+end
