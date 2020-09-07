@@ -8,7 +8,7 @@ class RayTracer
   end
 
   def wall_position(map:, from:, angle:)
-    ray = from.clone
+    ray = from.to_mut
     unit_vector = Vector.from_angle(angle)
     increment = unit_vector * RESOLUTION
 
@@ -16,6 +16,6 @@ class RayTracer
       ray = ray + increment
     end
 
-    ray
+    ray.to_vector
   end
 end

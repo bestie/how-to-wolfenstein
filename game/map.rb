@@ -64,11 +64,13 @@ class Map
   private
 
   def goal_position
-    row = rows.detect { |row| row.include?(GOAL) }
-    x = row.index(GOAL)
-    y = rows.index(row)
+    @goal_position ||= begin
+      row = rows.detect { |row| row.include?(GOAL) }
+      x = row.index(GOAL)
+      y = rows.index(row)
 
-    Vector[x, y]
+      Vector[x, y]
+    end
   end
 
   def angle_to_arrow(angle)

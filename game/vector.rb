@@ -12,4 +12,8 @@ Vector.class_eval do
   def y
     self[1]
   end
+
+  def to_mut
+    MutableVector.new(x, y)
+  end
 end

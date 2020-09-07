@@ -29,6 +29,12 @@ G           #
   let(:resolution) { RayTracer::RESOLUTION }
 
   describe "#wall_position" do
+    it "returns an immutable vector" do
+        vec = tracer.wall_position(map: map, from: Vector[0,0], angle: 0.0)
+
+        expect { vec + Vector[1, 1] }.not_to change { vec.to_a }
+    end
+
     context "from start position, looking north" do
       let(:position) { map.player_start_position }
       let(:angle) { 0 }
@@ -36,7 +42,7 @@ G           #
       it "find the top center wall surface" do
         wall_position = tracer.wall_position(map: map, from: position, angle: angle)
 
-        expect(wall_position).to match_vector(6.5, 1.0, tolerance: resolution)
+        expect(wall_position.to_a).to match_vector(6.5, 1.0, tolerance: resolution)
       end
     end
 
@@ -47,7 +53,7 @@ G           #
       it "finds the center-left wall surface" do
         wall_position = tracer.wall_position(map: map, from: position, angle: angle)
 
-        expect(wall_position).to match_vector(12.0, 6.5, tolerance: resolution)
+        expect(wall_position.to_a).to match_vector(12.0, 6.5, tolerance: resolution)
       end
     end
 
@@ -58,7 +64,7 @@ G           #
       it "finds the bottom-left corner" do
         wall_position = tracer.wall_position(map: map, from: position, angle: angle)
 
-        expect(wall_position).to match_vector(12.0, 12.0, tolerance: resolution)
+        expect(wall_position.to_a).to match_vector(12.0, 12.0, tolerance: resolution)
       end
     end
 
@@ -69,7 +75,7 @@ G           #
       it "finds the top-left corner" do
         wall_position = tracer.wall_position(map: map, from: position, angle: angle)
 
-        expect(wall_position).to match_vector(1.0, 1.0, tolerance: resolution)
+        expect(wall_position.to_a).to match_vector(1.0, 1.0, tolerance: resolution)
       end
     end
 
@@ -80,7 +86,7 @@ G           #
       it "finds the goal position as if it were a wall" do
         wall_position = tracer.wall_position(map: map, from: position, angle: angle)
 
-        expect(wall_position).to match_vector(1.0, 8.5, tolerance: resolution)
+        expect(wall_position.to_a).to match_vector(1.0, 8.5, tolerance: resolution)
       end
     end
   end
@@ -93,7 +99,7 @@ G           #
       it "finds the top, center wall surface" do
         wall_pos = tracer.wall_position(map: map, from: position, angle: angle)
 
-        expect(wall_pos).to match_vector(6.5, 1.0, tolerance: resolution)
+        expect(wall_pos.to_a).to match_vector(6.5, 1.0, tolerance: resolution)
       end
     end
 
@@ -104,7 +110,7 @@ G           #
       it "finds the center-left wall surface" do
         wall_pos = tracer.wall_position(map: map, from: position, angle: angle)
 
-        expect(wall_pos).to match_vector(12.0, 6.5, tolerance: resolution)
+        expect(wall_pos.to_a).to match_vector(12.0, 6.5, tolerance: resolution)
       end
     end
 
@@ -115,7 +121,7 @@ G           #
       it "finds the bottom-left corner" do
         wall_pos = tracer.wall_position(map: map, from: position, angle: angle)
 
-        expect(wall_pos).to match_vector(12.0, 12.0, tolerance: resolution)
+        expect(wall_pos.to_a).to match_vector(12.0, 12.0, tolerance: resolution)
       end
     end
 
@@ -126,7 +132,7 @@ G           #
       it "finds the top-left corner" do
         wall_pos = tracer.wall_position(map: map, from: position, angle: angle)
 
-        expect(wall_pos).to match_vector(1.0, 1.0, tolerance: resolution)
+        expect(wall_pos.to_a).to match_vector(1.0, 1.0, tolerance: resolution)
       end
     end
 
@@ -137,7 +143,7 @@ G           #
       it "finds the goal position as if it were a wall" do
         wall_pos = tracer.wall_position(map: map, from: position, angle: angle)
 
-        expect(wall_pos).to match_vector(1.0, 8.5, tolerance: resolution)
+        expect(wall_pos.to_a).to match_vector(1.0, 8.5, tolerance: resolution)
       end
     end
   end
