@@ -1,3 +1,5 @@
+Thread.abort_on_exception = true
+
 class Game
   def initialize(io:, map:, player:, renderer:)
     @io = io
@@ -9,6 +11,9 @@ class Game
     @input_buffer = []
     @player.position = map.player_start_position
     @field_of_view = π / 4.0
+
+    @frame_count = 0
+    @window_timer = nil
   end
 
   attr_reader :io, :map, :player, :renderer, :field_of_view
@@ -18,11 +23,10 @@ class Game
     io.write(ANSI.save_terminal_state)
     @canvas_size = io.winsize
 
+    start_input_thread
     render_frame
     until @over do
-      get_input
-      update_game_state
-      render_frame
+      render_frame_measured
     end
 
     io.write(ANSI.restore_terminal_state)
@@ -33,6 +37,15 @@ class Game
   end
 
   private
+
+  def start_input_thread
+    @input_thread ||= Thread.new do
+      until @over
+        get_input
+        update_game_state
+      end
+    end
+  end
 
   def get_input
     @input_buffer << io.getch
@@ -57,6 +70,21 @@ class Game
       player.turn_left
     when ANSI.right_arrow
       player.turn_right
+    end
+  end
+
+  def render_frame_measured
+    @window_timer ||= Time.now.to_f
+    @frame_count += 1
+
+    render_frame
+
+    sample_window = Time.now.to_f - @window_timer
+    if sample_window > 1.0 && @frame_count > 0
+      frame_rate = @frame_count / sample_window
+      $log.puts "Frame rate: #{frame_rate.round(2)}"
+      @frame_count = 0
+      @window_timer = nil
     end
   end
 
