@@ -14,6 +14,7 @@ class Game
 
     @frame_count = 0
     @window_timer = nil
+    @show_map = true
   end
 
   attr_reader :io, :map, :player, :renderer, :field_of_view
@@ -69,6 +70,8 @@ class Game
       player.walk_back
     when "d"
       player.strafe_right
+    when "m"
+      @show_map = !@show_map
     when ANSI.ctrl_c
       stop
     end
@@ -101,10 +104,6 @@ class Game
 
     output_buffer = []
 
-    map_hud = map
-      .overlay_player(@player.position, @player.angle)
-      .rows
-
     scene = renderer.call(
       map: map,
       field_of_view: field_of_view,
@@ -116,8 +115,14 @@ class Game
 
     scene.each { |line_chars| output_buffer << line_chars }
 
-    map_hud.each_with_index do |map_line, i|
-      output_buffer[i] = map_line + output_buffer[i].drop(map_line.length)
+    if @show_map
+      map_hud = map
+        .overlay_player(@player.position, @player.angle)
+        .rows
+
+      map_hud.each_with_index do |map_line, i|
+        output_buffer[i] = map_line + output_buffer[i].drop(map_line.length)
+      end
     end
 
     if map.goal?(player.position)
