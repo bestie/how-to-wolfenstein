@@ -18,7 +18,10 @@ key_delay = 0.05
 
 IO.console.raw do |io|
   begin
-    demo_io = DemoIOAdapter.new(io, char_stream, delay: key_delay)
+    width = ARGV.fetch(0, io.winsize[1])
+    height = ARGV.fetch(1, io.winsize[0])
+
+    demo_io = DemoIOAdapter.new(io, char_stream, delay: key_delay, winsize: [height, width])
 
     map = Map.from_string(level)
     tracer = RayTracer.new

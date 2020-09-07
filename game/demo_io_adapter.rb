@@ -1,10 +1,13 @@
 class DemoIOAdapter
-  def initialize(io, char_stream, delay: 1.0)
+  def initialize(io, char_stream, winsize: [40, 120], delay: 1.0)
     @io = io
     @char_stream = char_stream
     @delay = delay
     @cursor = 0
+    @winsize = winsize
   end
+
+  attr_reader :winsize
 
   def write(s)
     @io.write(s)
@@ -15,9 +18,5 @@ class DemoIOAdapter
     sleep(@delay)
     @cursor += 1
     char || ANSI.ctrl_c
-  end
-
-  def winsize
-    [40, 120]
   end
 end
