@@ -40,6 +40,7 @@ class Game
 
   def stop
     @over = true
+    @input_thread && @input_thread.terminate
     io.write("\r\n")
   end
 
