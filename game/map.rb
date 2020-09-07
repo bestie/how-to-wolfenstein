@@ -53,11 +53,13 @@ class Map
   end
 
   def goal?(position)
-    position.to_a.map(&:floor) == goal_position.to_a
+    position.x.floor == goal_position.x &&
+    position.y.floor == goal_position.y
   end
 
   def wall?(position)
-    x,y = position.to_a.map(&:floor)
+    x = position.x.floor
+    y = position.y.floor
     rows[y][x] == WALL || rows[y][x] == GOAL
   end
 
