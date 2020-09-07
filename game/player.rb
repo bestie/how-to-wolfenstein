@@ -1,7 +1,7 @@
 require "vector"
 
 class Player
-  def initialize(position: Vector[0.0, 0.0], angle: 0.0, speed: 1.0, turn_rate: π/8.0)
+  def initialize(position: Vector[0.0, 0.0], angle: 0.0, speed: 0.1, turn_rate: π/8.0)
     @position = position
     @angle = angle
     @speed = speed
@@ -10,20 +10,24 @@ class Player
 
   attr_accessor :position, :angle, :speed
 
-  def walk_forward
-    @position = @position + (look_unit_vector * speed)
+  def walk_forward(&block)
+    new_position = @position + (look_unit_vector * speed)
+    update_position(new_position, block)
   end
 
-  def strafe_left
-    @position = @position + (left_unit_vector * speed)
+  def walk_back(&block)
+    new_position = @position - (look_unit_vector * speed)
+    update_position(new_position, block)
   end
 
-  def walk_back
-    @position = @position - (look_unit_vector * speed)
+  def strafe_left(&block)
+    new_position = @position + (left_unit_vector * speed)
+    update_position(new_position, block)
   end
 
-  def strafe_right
-    @position = @position + (right_unit_vector * speed)
+  def strafe_right(&block)
+    new_position = @position + (right_unit_vector * speed)
+    update_position(new_position, block)
   end
 
   def turn_left
@@ -46,5 +50,17 @@ class Player
 
   def look_unit_vector
     Vector.from_angle(angle)
+  end
+
+  private
+
+  def update_position(new_position, check)
+    if check
+      if check.call(new_position)
+        @position = new_position
+      end
+    else
+      @position = new_position
+    end
   end
 end

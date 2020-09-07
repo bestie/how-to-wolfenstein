@@ -19,9 +19,20 @@ class Map
 
   def initialize(rows)
     @rows = rows
+    @max_y = rows.length
+    @max_x = rows[0].length
   end
 
   attr_reader :rows, :player_start_position
+
+  def in_bounds?(position)
+    (
+      position.x > 0 &&
+      position.y > 0 &&
+      position.x < @max_x &&
+      position.y < @max_y
+    ) && (goal?(position) || !wall?(position))
+  end
 
   def overlay_player(position, angle)
     x = position.x.floor

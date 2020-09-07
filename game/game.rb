@@ -63,13 +63,13 @@ class Game
   def update_game_state
     case @input_buffer.last
     when "w"
-      player.walk_forward
+      player.walk_forward { |pos| map.in_bounds?(pos) }
     when "a"
-      player.strafe_left
+      player.strafe_left { |pos| map.in_bounds?(pos) }
     when "s"
-      player.walk_back
+      player.walk_back { |pos| map.in_bounds?(pos) }
     when "d"
-      player.strafe_right
+      player.strafe_right { |pos| map.in_bounds?(pos) }
     when "m"
       @show_map = !@show_map
     when ANSI.ctrl_c

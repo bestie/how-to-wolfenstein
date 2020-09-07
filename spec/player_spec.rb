@@ -16,6 +16,9 @@ RSpec.describe Player do
   let(:turn_rate) { π / 8.0 }
   let(:unit_length_45_deg) { Math.sqrt(0.5) }
 
+  let(:passing_check) { ->(_) { true } }
+  let(:failing_check) { ->(_) { false } }
+
   describe "#walk_forward" do
     context "facing south" do
       let(:angle) { π }
@@ -39,6 +42,30 @@ RSpec.describe Player do
           .from([0, 0])
           .to match_vector(*new_position)
       end
+    end
+
+    context "when check passes" do
+      it "does not update the position" do
+        expect { player.walk_forward(&passing_check) }
+          .to change { player.position }
+      end
+    end
+
+    context "when check fails" do
+      it "does not update the position" do
+        expect { player.walk_forward(&failing_check) }
+          .not_to change { player.position }
+      end
+    end
+
+    it "passes the new position to the check function" do
+      new_position = Vector[0.0, -1.0]
+      captured_args = nil
+      check_func = ->(*args) { captured_args = args }
+
+      player.walk_forward(&check_func)
+
+      expect(captured_args).to eq([new_position])
     end
   end
 
@@ -64,6 +91,20 @@ RSpec.describe Player do
           .to change { player.position }
           .from([0, 0])
           .to match_vector(*new_position)
+      end
+    end
+
+    context "when check passes" do
+      it "does not update the position" do
+        expect { player.walk_back(&passing_check) }
+          .to change { player.position }
+      end
+    end
+
+    context "when check fails" do
+      it "does not update the position" do
+        expect { player.walk_back(&failing_check) }
+          .not_to change { player.position }
       end
     end
   end
@@ -92,6 +133,20 @@ RSpec.describe Player do
           .to match_vector(*new_position)
       end
     end
+
+    context "when check passes" do
+      it "does not update the position" do
+        expect { player.strafe_left(&passing_check) }
+          .to change { player.position }
+      end
+    end
+
+    context "when check fails" do
+      it "does not update the position" do
+        expect { player.strafe_left(&failing_check) }
+          .not_to change { player.position }
+      end
+    end
   end
 
   describe "#strafe_right" do
@@ -118,6 +173,20 @@ RSpec.describe Player do
           .to match_vector(*new_position)
       end
     end
+
+    context "when check passes" do
+      it "does not update the position" do
+        expect { player.strafe_right(&passing_check) }
+          .to change { player.position }
+      end
+    end
+
+    context "when check fails" do
+      it "does not update the position" do
+        expect { player.strafe_right(&failing_check) }
+          .not_to change { player.position }
+      end
+    end
   end
 
   describe "#walk_back" do
@@ -142,6 +211,20 @@ RSpec.describe Player do
           .to change { player.position }
           .from([0, 0])
           .to match_vector(*new_position)
+      end
+    end
+
+    context "when check passes" do
+      it "does not update the position" do
+        expect { player.walk_back(&passing_check) }
+          .to change { player.position }
+      end
+    end
+
+    context "when check fails" do
+      it "does not update the position" do
+        expect { player.walk_back(&failing_check) }
+          .not_to change { player.position }
       end
     end
   end

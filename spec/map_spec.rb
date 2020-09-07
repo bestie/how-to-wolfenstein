@@ -5,6 +5,38 @@ require "map"
 RSpec.describe Map do
   subject(:map) { Map.from_string(level_string) }
 
+  describe "#in_bounds?" do
+    context "when query position in within the walls" do
+      it "returns true" do
+        expect(map.in_bounds?(Vector[1.0, 1.0])).to be(true)
+        expect(map.in_bounds?(Vector[5.5, 3.5])).to be(true)
+        expect(map.in_bounds?(Vector[7.9, 3.9])).to be(true)
+      end
+    end
+
+    context "when query position in within a wall tile" do
+      it "returns false" do
+        expect(map.in_bounds?(Vector[0.5, 0.5])).to be(false)
+        expect(map.in_bounds?(Vector[3.5, 0.5])).to be(false)
+        expect(map.in_bounds?(Vector[0.5, 3.5])).to be(false)
+        expect(map.in_bounds?(Vector[8.0, 4.0])).to be(false)
+      end
+    end
+
+    context "when query position within a goal tile" do
+      it "returns true" do
+        expect(map.in_bounds?(Vector[8.1, 2.5])).to be(true)
+      end
+    end
+
+    context "when query position in outside map" do
+      it "returns false" do
+        expect(map.in_bounds?(Vector[-10.0, -10.0])).to be(false)
+        expect(map.in_bounds?(Vector[100.0, 1000.0])).to be(false)
+      end
+    end
+  end
+
   describe "#rows" do
     it "returns a 2D array character representation of the level" do
       expect(map.rows.length).to eq(5)
