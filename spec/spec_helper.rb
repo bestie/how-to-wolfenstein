@@ -30,7 +30,6 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   module Helpers
-    # Stdlib Vector will match with array :)
     def match_vector(x, y, tolerance: 10**-6)
       match([
         within(tolerance).of(x),

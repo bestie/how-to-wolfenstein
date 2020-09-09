@@ -10,33 +10,23 @@ class MutableVector
     [x, y]
   end
 
-  def [](n)
-    if n == 0
-      x
-    elsif n == 1
-      y
-    else
-      raise IndexError.new("#{self.inspect} has no index #{n}")
-    end
-  end
-
   def magnitude
     Math.sqrt(@x**2 + @y**2)
   end
 
   def ==(other)
-    x == other[0] && y == other[1]
+    x == other.x && y == other.y
   end
 
   def +(other)
-    @x += other[0]
-    @y += other[1]
+    @x += other.x
+    @y += other.y
     self
   end
 
   def -(other)
-    @x -= other[0]
-    @y -= other[1]
+    @x -= other.x
+    @y -= other.y
     self
   end
 

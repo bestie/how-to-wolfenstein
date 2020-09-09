@@ -6,21 +6,6 @@ RSpec.describe MutableVector do
   let(:vec) { MutableVector.new(1, 2) }
   let(:other) { Vector[2, 2] }
 
-  describe "#[]" do
-    let(:vec) { MutableVector.new(3, 4) }
-
-    it "indexes into the vector" do
-      expect([vec[0], vec[1]]).to eq([3, 4])
-    end
-
-    context "when argument is out of bounds" do
-      it "rasies an IndexError" do
-        expect { vec[-1] }.to raise_error(IndexError)
-        expect { vec[2] }.to raise_error(IndexError)
-      end
-    end
-  end
-
   describe "#==" do
     context "when the other vector has equal components" do
       it "is equal" do

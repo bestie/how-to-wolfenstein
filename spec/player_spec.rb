@@ -27,7 +27,7 @@ RSpec.describe Player do
       it "increments the y position by the speed" do
         expect { player.walk_forward }
           .to change { player.position }
-          .to match_vector(0, speed)
+          .to eq(Vector[0, speed])
       end
     end
 
@@ -39,8 +39,8 @@ RSpec.describe Player do
 
         expect { player.walk_forward }
           .to change { player.position }
-          .from([0, 0])
-          .to match_vector(*new_position)
+          .from(Vector[0, 0])
+          .to eq(new_position)
       end
     end
 
@@ -59,13 +59,12 @@ RSpec.describe Player do
     end
 
     it "passes the new position to the check function" do
-      new_position = Vector[0.0, -1.0]
       captured_args = nil
       check_func = ->(*args) { captured_args = args }
 
       player.walk_forward(&check_func)
 
-      expect(captured_args).to eq([new_position])
+      expect(captured_args).to eq([Vector[0.0, -1.0]])
     end
   end
 
@@ -77,7 +76,7 @@ RSpec.describe Player do
       it "decrements the y position by the speed" do
         expect { player.walk_back }
           .to change { player.position }
-          .to match_vector(0, -speed)
+          .to eq(Vector[0, -speed])
       end
     end
 
@@ -89,8 +88,8 @@ RSpec.describe Player do
 
         expect { player.walk_back }
           .to change { player.position }
-          .from([0, 0])
-          .to match_vector(*new_position)
+          .from(Vector[0, 0])
+          .to eq(Vector[*new_position])
       end
     end
 
@@ -117,7 +116,7 @@ RSpec.describe Player do
       it "increments the x position by the speed" do
         expect { player.strafe_left }
           .to change { player.position }
-          .to match_vector(speed, 0)
+          .to eq(Vector[speed, 0])
       end
     end
 
@@ -129,8 +128,8 @@ RSpec.describe Player do
 
         expect { player.strafe_left }
           .to change { player.position }
-          .from([0, 0])
-          .to match_vector(*new_position)
+          .from(Vector[0, 0])
+          .to eq(Vector[*new_position])
       end
     end
 
@@ -157,7 +156,7 @@ RSpec.describe Player do
       it "decrements the x position by the speed" do
         expect { player.strafe_right }
           .to change { player.position }
-          .to match_vector(-speed, 0)
+          .to eq(Vector[-speed, 0])
       end
     end
 
@@ -169,8 +168,8 @@ RSpec.describe Player do
 
         expect { player.strafe_right }
           .to change { player.position }
-          .from([0, 0])
-          .to match_vector(*new_position)
+          .from(Vector[0, 0])
+          .to eq(Vector[*new_position])
       end
     end
 
@@ -197,7 +196,7 @@ RSpec.describe Player do
       it "decrements the y position by the speed" do
         expect { player.walk_back }
           .to change { player.position }
-          .to match_vector(0, -speed)
+          .to eq(Vector[0, -speed])
       end
     end
 
@@ -209,8 +208,8 @@ RSpec.describe Player do
 
         expect { player.walk_back }
           .to change { player.position }
-          .from([0, 0])
-          .to match_vector(*new_position)
+          .from(Vector[0, 0])
+          .to eq(Vector[*new_position])
       end
     end
 
