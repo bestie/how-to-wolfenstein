@@ -15,7 +15,9 @@ class DemoIOAdapter
 
   def getch(*args)
     char = @char_stream[@cursor]
-    sleep(@delay)
+    unless ["\e", "["].include?(char)
+      sleep(@delay)
+    end
     @cursor += 1
     char || ANSI.ctrl_c
   end
