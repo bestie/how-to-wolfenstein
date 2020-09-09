@@ -21,5 +21,16 @@ IO.console.raw do |io|
     renderer: renderer,
   )
 
-  game.start
+  if ARGV.include?("--profile")
+    require "ruby-prof"
+    RubyProf.start
+    game.start
+    result = RubyProf.stop
+
+    prof_log = File.open("profs/prof--#{io.winsize.join("x")}--#{$total_frames}-frames", "w")
+    printer = RubyProf::FlatPrinter.new(result)
+    printer.print(prof_log)
+  else
+    game.start
+  end
 end
