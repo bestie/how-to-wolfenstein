@@ -59,7 +59,7 @@ RSpec.describe ANSIRenderer do
       scene = renderer.call
       column = scene.transpose[0]
 
-      expect(column.drop(11).take(18)).to eq([ANSI.black_on_red("%")] * 18)
+      expect(column.drop(11).take(18)).to eq([ANSI.red("*")] * 18)
     end
 
     it "renders the ceiling and floor the same size" do
@@ -78,7 +78,7 @@ RSpec.describe ANSIRenderer do
       scene = renderer.call
       column = scene.transpose[0]
 
-      expect(column).to eq([ANSI.black_on_red("=")] * 40)
+      expect(column).to eq([ANSI.black_on_red("%")] * 40)
     end
   end
 
@@ -124,7 +124,7 @@ RSpec.describe ANSIRenderer do
       scene = renderer.call
       column = scene.transpose[0]
 
-      expect(column).to include(ANSI.black_on_green("."))
+      expect(column).to include(ANSI.black_on_green("*"))
     end
   end
 
