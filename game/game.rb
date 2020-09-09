@@ -15,6 +15,7 @@ class Game
     @frame_count = 0
     @window_timer = nil
     @show_map = true
+    @current_frame_rate = 0
   end
 
   attr_reader :io, :map, :player, :renderer, :field_of_view
@@ -93,8 +94,7 @@ class Game
 
     sample_window = Time.now.to_f - @window_timer
     if sample_window > 1.0 && @frame_count > 0
-      frame_rate = @frame_count / sample_window
-      $log.puts "Frame rate: #{frame_rate.round(2)}"
+      @current_frame_rate = @frame_count / sample_window
       @frame_count = 0
       @window_timer = nil
     end
@@ -117,12 +117,13 @@ class Game
     scene.each { |line_chars| output_buffer << line_chars }
 
     if @show_map
-      map_hud = map
+      hud = map
         .overlay_player(@player.position, @player.angle)
         .rows
+      hud.push "Current frame rate: #{@current_frame_rate.floor}".chars
 
-      map_hud.each_with_index do |map_line, i|
-        output_buffer[i] = map_line + output_buffer[i].drop(map_line.length)
+      hud.each_with_index do |line, i|
+        output_buffer[i] = line + output_buffer[i].drop(line.length)
       end
     end
 
