@@ -69,22 +69,21 @@ class ANSIRenderer
   end
 
   def wall_projection(distance)
-    non_zero_distance = [0.1, distance].max
+    non_zero_distance = [2.0, distance].max
 
-    [
-      (2.0 / non_zero_distance),
-      1.0,
-    ].min
+    2.0 / non_zero_distance
   end
 
   def wall_char(distance, wall_position)
     return " " if distance > MAX_DEPTH
 
-    intensity = 1.0/( (distance/(MAX_DEPTH/2.0))**2 + 1 )
-    shade_index = (intensity * WALL_GRADIENT.length).floor - 1
+    intensity = 1.0/( (distance/(MAX_DEPTH/2.0) + 1.01)**2)
+
     if map.goal?(wall_position)
+      shade_index = (intensity * GOAL_GRADIENT.length).floor
       GOAL_GRADIENT.fetch(shade_index)
     else
+      shade_index = (intensity * WALL_GRADIENT.length).floor
       WALL_GRADIENT.fetch(shade_index)
     end
   end
