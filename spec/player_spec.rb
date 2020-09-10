@@ -45,7 +45,7 @@ RSpec.describe Player do
     end
 
     context "when check passes" do
-      it "does not update the position" do
+      it "updates the position" do
         expect { player.walk_forward(&passing_check) }
           .to change { player.position }
       end
@@ -89,12 +89,12 @@ RSpec.describe Player do
         expect { player.walk_back }
           .to change { player.position }
           .from(Vector[0, 0])
-          .to eq(Vector[*new_position])
+          .to eq(new_position)
       end
     end
 
     context "when check passes" do
-      it "does not update the position" do
+      it "updates the position" do
         expect { player.walk_back(&passing_check) }
           .to change { player.position }
       end
@@ -129,12 +129,12 @@ RSpec.describe Player do
         expect { player.strafe_left }
           .to change { player.position }
           .from(Vector[0, 0])
-          .to eq(Vector[*new_position])
+          .to eq(new_position)
       end
     end
 
     context "when check passes" do
-      it "does not update the position" do
+      it "updates the position" do
         expect { player.strafe_left(&passing_check) }
           .to change { player.position }
       end
@@ -169,12 +169,12 @@ RSpec.describe Player do
         expect { player.strafe_right }
           .to change { player.position }
           .from(Vector[0, 0])
-          .to eq(Vector[*new_position])
+          .to eq(new_position)
       end
     end
 
     context "when check passes" do
-      it "does not update the position" do
+      it "updates the position" do
         expect { player.strafe_right(&passing_check) }
           .to change { player.position }
       end
@@ -209,12 +209,12 @@ RSpec.describe Player do
         expect { player.walk_back }
           .to change { player.position }
           .from(Vector[0, 0])
-          .to eq(Vector[*new_position])
+          .to eq(new_position)
       end
     end
 
     context "when check passes" do
-      it "does not update the position" do
+      it "updates the position" do
         expect { player.walk_back(&passing_check) }
           .to change { player.position }
       end
