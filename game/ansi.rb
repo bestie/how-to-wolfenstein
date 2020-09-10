@@ -9,8 +9,8 @@ module ANSI
     escape("C")
   end
 
-  def save_terminal_state
-    escape("?47h")
+  def save_and_clear_terminal
+    escape("[?47h") + escape("[2J")
   end
 
   def restore_terminal_state

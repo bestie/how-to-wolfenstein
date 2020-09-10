@@ -22,7 +22,7 @@ class Game
   private     :io, :map, :player, :renderer, :field_of_view
 
   def start
-    io.write(ANSI.save_terminal_state)
+    io.write(ANSI.save_and_clear_terminal)
     io.write(ANSI.hide_cursor)
     @canvas_size = io.winsize
 
