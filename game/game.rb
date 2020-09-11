@@ -25,6 +25,7 @@ class Game
 
   def start
     start_input_thread
+    start_state_thread
 
     io.write(ANSI.save_and_clear_terminal + ANSI.hide_cursor)
     @canvas_size = io.winsize
@@ -44,6 +45,7 @@ class Game
   def stop
     @over = true
     @input_thread && @input_thread.terminate
+    @state_thread && @state_thread.terminate
   end
 
   def over?
@@ -56,7 +58,15 @@ class Game
     @input_thread ||= Thread.new do
       until @over
         get_input
+      end
+    end
+  end
+
+  def start_state_thread
+    @state_thread ||= Thread.new do
+      until @over
         update_game_state
+        sleep(0.001)
       end
     end
   end
@@ -68,27 +78,50 @@ class Game
   def update_game_state
     char = @input_buffer.last
 
+    return unless char
+
     case char
     when "w"
-      player.walk_forward { |pos| map.in_bounds?(pos) }
+      animate do
+        player.walk_forward { |pos| map.in_bounds?(pos) }
+      end
     when "a"
-      player.strafe_left { |pos| map.in_bounds?(pos) }
+      animate do
+        player.strafe_left { |pos| map.in_bounds?(pos) }
+      end
     when "s"
-      player.walk_back { |pos| map.in_bounds?(pos) }
+      animate do
+        player.walk_back { |pos| map.in_bounds?(pos) }
+      end
     when "d"
-      player.strafe_right { |pos| map.in_bounds?(pos) }
+      animate do
+        player.strafe_right { |pos| map.in_bounds?(pos) }
+      end
     when "m"
       @show_map = !@show_map
+      @input_buffer.clear
     when ANSI.ctrl_c
       stop
     end
 
     case @input_buffer.last(3).join
     when ANSI.left_arrow
-      player.turn_left
+      animate do
+        player.turn_left
+      end
     when ANSI.right_arrow
-      player.turn_right
+      animate do
+        player.turn_right
+      end
     end
+  end
+
+  def animate
+    8.times do
+      yield
+      sleep(0.0167)
+    end
+    @input_buffer.clear
   end
 
   def render_frame_measured
