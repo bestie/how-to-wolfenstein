@@ -7,16 +7,19 @@ $log = File.open("log", "a")
 $log.sync = true
 $total_frames = 0
 
-level = File.read("game/levels/level1.txt")
+levels = Dir
+  .glob("game/levels/*.txt")
+  .sort
+  .map { |filepath| File.read(filepath) }
 
 IO.console.raw do |io|
-  map = Map.from_string(level)
+  maps = levels.map { |string| Map.from_string(string) }
   tracer = RayTracer.new
   renderer = ANSIRenderer.to_callable_with(tracer: tracer)
 
   game = Game.new(
     io: io,
-    map: map,
+    maps: maps,
     player: Player.new,
     renderer: renderer,
   )

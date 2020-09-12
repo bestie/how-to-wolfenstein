@@ -1,16 +1,17 @@
 Thread.abort_on_exception = true
 
 class Game
-  def initialize(io:, map:, player:, renderer:)
+  def initialize(io:, maps:, player:, renderer:)
     @io = io
-    @map = map
+    @maps = maps
     @player = player
     @renderer = renderer
 
     @over = false
+    @current_map = 0
     @input_buffer = []
-    @player.position = map.player_start_position
     @field_of_view = π / 4.0
+    reset_map
 
     @frame_count = 0
     @window_timer = nil
@@ -130,10 +131,22 @@ class Game
     if map.goal?(player.position)
       write_buffer(win_frame)
       sleep(2)
-      stop
+      next_level or stop
     else
       write_buffer(output_buffer)
     end
+  end
+
+  def next_level
+    if @maps[@current_map + 1]
+      @current_map +=1
+      reset_map
+    end
+  end
+
+  def reset_map
+    @map = @maps.fetch(@current_map)
+    @player.position = map.player_start_position
   end
 
   def write_buffer(buffer)
