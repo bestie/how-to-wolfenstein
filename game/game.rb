@@ -8,9 +8,10 @@ class Game
     @renderer = renderer
 
     @over = false
-    @current_map = 0
+    @current_map_index = 0
     @input_buffer = []
     @field_of_view = π / 4.0
+    @input_thread = nil
     reset_map
 
     @frame_count = 0
@@ -19,16 +20,15 @@ class Game
     @current_frame_rate = 0
   end
 
-  attr_reader :io, :map, :player, :renderer, :field_of_view
-  private     :io, :map, :player, :renderer, :field_of_view
+  attr_reader :io, :player, :renderer, :field_of_view
+  private     :io, :player, :renderer, :field_of_view
 
   def start
-    io.write(ANSI.save_and_clear_terminal)
-    io.write(ANSI.hide_cursor)
+    start_input_thread
+
+    io.write(ANSI.save_and_clear_terminal + ANSI.hide_cursor)
     @canvas_size = io.winsize
 
-    start_input_thread
-    render_frame
     until @over do
       render_frame_measured
     end
@@ -37,14 +37,17 @@ class Game
     $log.puts(e.inspect)
     $log.puts(e.backtrace)
   ensure
-    io.write(ANSI.restore_terminal_state)
-    io.write(ANSI.unhide_cursor)
+    stop
+    io.write(ANSI.restore_terminal_state + ANSI.unhide_cursor)
   end
 
   def stop
     @over = true
     @input_thread && @input_thread.terminate
-    io.write("\r\n")
+  end
+
+  def over?
+    !!@over
   end
 
   private
@@ -63,7 +66,9 @@ class Game
   end
 
   def update_game_state
-    case @input_buffer.last
+    char = @input_buffer.last
+
+    case char
     when "w"
       player.walk_forward { |pos| map.in_bounds?(pos) }
     when "a"
@@ -102,8 +107,6 @@ class Game
   end
 
   def render_frame
-    io.write(ANSI.cursor_top_left)
-
     output_buffer = []
 
     scene = renderer.call(
@@ -130,27 +133,40 @@ class Game
 
     if map.goal?(player.position)
       write_buffer(win_frame)
-      sleep(2)
+      wait_for_key
       next_level or stop
     else
       write_buffer(output_buffer)
     end
   end
 
-  def next_level
-    if @maps[@current_map + 1]
-      @current_map +=1
-      reset_map
+  def wait_for_key
+    initial_key_count = @input_buffer.length
+    10.times do
+      sleep(0.1)
+      key_count = @input_buffer.length
+      break if key_count > initial_key_count
     end
   end
 
+  def next_level
+    if @maps[@current_map_index + 1]
+      @current_map_index +=1
+      reset_map
+      true
+    end
+  end
+
+  def map
+    @maps[@current_map_index]
+  end
+
   def reset_map
-    @map = @maps.fetch(@current_map)
     @player.position = map.player_start_position
   end
 
   def write_buffer(buffer)
-    io.write(buffer.map(&:join).join("\r\n"))
+    io.write(ANSI.cursor_top_left + buffer.map(&:join).join("\r\n"))
   end
 
   def win_frame
