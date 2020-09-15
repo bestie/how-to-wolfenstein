@@ -30,11 +30,12 @@ class ANSIRenderer
   private     :map, :tracer, :field_of_view, :position, :angle, :canvas_width, :canvas_height
 
   def call
-    scene = field_of_view_range.map { |angle|
-      wall_pos = tracer.wall_position(map: map, from: position, angle: angle)
+    scene = field_of_view_range.map { |ray_angle|
+      wall_pos = tracer.wall_position(map: map, from: position, angle: ray_angle)
       vector_to_wall = wall_pos - position
+      fisheye_corrected_distance = vector_to_wall.magnitude * Math.cos((angle - ray_angle))
 
-      render_column(vector_to_wall, wall_pos)
+      render_column(fisheye_corrected_distance, wall_pos)
     }
 
     scene.transpose
@@ -42,8 +43,7 @@ class ANSIRenderer
 
   private
 
-  def render_column(vector_to_wall, wall_position)
-    distance = vector_to_wall.magnitude
+  def render_column(distance, wall_position)
     ceiling_projection = ceiling_projection(distance)
 
     ceiling_char_size  = (ceiling_projection * canvas_height).round

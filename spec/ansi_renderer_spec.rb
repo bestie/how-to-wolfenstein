@@ -128,6 +128,33 @@ RSpec.describe ANSIRenderer do
     end
   end
 
+  context "with a real map and tracer" do
+    let(:tracer) { RayTracer.new }
+    let(:map) { Map.from_string(<<~MAP) }
+      #########
+      #       #
+      #       #
+      #       #
+      #   X   #
+      G       #
+      #########
+    MAP
+
+    context "player faces a straight wall" do
+      let(:position) { map.player_start_position }
+      let(:angle) { 0.0 }
+
+      it "renders all wall columns the same height" do
+        scene = renderer.call
+
+        puts scene.map(&:join)
+
+        wall_heights = scene.transpose.map { |col| count_wall_chars(col) }
+        expect(wall_heights.uniq).to eq([22])
+      end
+    end
+  end
+
   def count_wall_chars(column)
     column.count { |char| ANSIRenderer::WALL_GRADIENT.include?(char) }
   end
