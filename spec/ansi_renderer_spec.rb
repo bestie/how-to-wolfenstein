@@ -54,20 +54,27 @@ RSpec.describe ANSIRenderer do
 
   context "when the column's distance is 4.5" do
     let(:distance_to_wall) { 4.5 }
+    let(:floor_size) { 7 }
+    let(:wall_size) { canvas_height - floor_size * 2 }
 
     it "renders the visible wall vertical center" do
       scene = renderer.call
       column = scene.transpose[0]
 
-      expect(column.drop(11).take(18)).to eq([ANSI.red("*")] * 18)
+      wall_rendering = [ANSI.red("@")] * wall_size
+
+      expect(column.drop(floor_size).take(wall_size)).to eq(wall_rendering)
     end
 
     it "renders the ceiling and floor the same size" do
       scene = renderer.call
       column = scene.transpose[0]
 
-      expect(column.take(11)).to eq([" "] * 11)
-      expect(column.drop(11).drop(18)).to eq(["."] * 11)
+      floor_rendering = [" "] * floor_size
+      ceiling_rendering = ["."] * floor_size
+
+      expect(column.take(floor_size)).to eq(floor_rendering)
+      expect(column.drop(floor_size).drop(wall_size)).to eq(ceiling_rendering)
     end
   end
 
@@ -78,7 +85,7 @@ RSpec.describe ANSIRenderer do
       scene = renderer.call
       column = scene.transpose[0]
 
-      expect(column).to eq([ANSI.black_on_red("%")] * 40)
+      expect(column).to eq([ANSI.black_on_red("#")] * 40)
     end
   end
 
@@ -96,7 +103,7 @@ RSpec.describe ANSIRenderer do
   context "when that column's distance is max drawing distance" do
     let(:wall_position) { Vector[0.0, 10.0] }
 
-    it "renders the visible wall vertical center" do
+    xit "renders the visible wall vertical center" do
       scene = renderer.call
       column = scene.transpose[0]
 
@@ -107,7 +114,7 @@ RSpec.describe ANSIRenderer do
   context "when that column's distance is beyond max drawing distance" do
     let(:wall_position) { Vector[0.0, 10.1] }
 
-    it "renders the visible wall vertical center" do
+    xit "renders the no wall" do
       scene = renderer.call
       column = scene.transpose[0]
 
@@ -124,7 +131,7 @@ RSpec.describe ANSIRenderer do
       scene = renderer.call
       column = scene.transpose[0]
 
-      expect(column).to include(ANSI.black_on_green("*"))
+      expect(column).to include(ANSI.black_on_green("+"))
     end
   end
 
