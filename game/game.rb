@@ -124,7 +124,10 @@ class Game
       hud = map
         .overlay_player(@player.position, @player.angle)
         .rows
+
       hud.push "Current frame rate: #{@current_frame_rate.floor}".chars
+      hud.push "Position: #{player.position.to_a}".chars
+      hud.push "Resolution: #{canvas_width} x #{canvas_height}".chars
 
       hud.each_with_index do |line, i|
         output_buffer[i] = line + output_buffer[i].drop(line.length)
