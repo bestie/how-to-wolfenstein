@@ -1,7 +1,7 @@
 require "vector"
 
 class Player
-  def initialize(position: Vector[0.0, 0.0], angle: 0.0, speed: 0.1, turn_rate: π/8.0)
+  def initialize(position: Vector[0.0, 0.0], angle: 0.0, speed: 0.1, turn_rate: π/16.0)
     @position = position
     @angle = angle
     @speed = speed
