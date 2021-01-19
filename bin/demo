@@ -16,11 +16,13 @@ levels = Dir
   .map { |filepath| File.read(filepath) }
 
 char_stream = [
-  ANSI.right_arrow * 4,
-  "w" * 400,
+  ANSI.right_arrow * 8,
+  "w" * 50,
+  ANSI.left_arrow * 8,
+  "w" * 3,
 ].join.chars
 
-key_delay = 0.03
+key_delay = 0.06
 
 IO.console.raw do |io|
   begin
