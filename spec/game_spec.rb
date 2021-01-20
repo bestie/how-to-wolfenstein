@@ -59,21 +59,6 @@ RSpec.describe Game do
       end
     end
 
-    it "calls the renderer with most of the game state" do
-      start_game
-
-      allow_game_thread_to_run
-
-      expect(renderer).to have_received(:call).with(
-        map: map,
-        field_of_view: π/4.0,
-        position: player.position,
-        angle: player.angle,
-        canvas_width: width,
-        canvas_height: height,
-      )
-    end
-
     it "moves the cursor to the top left before writing the frame" do
       start_game
 
