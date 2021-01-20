@@ -9,12 +9,12 @@ module ANSI
     escape("C")
   end
 
-  def save_and_clear_terminal
-    escape("[?47h") + escape("[2J")
+  def save_terminal_state
+    escape("?1049h")
   end
 
   def restore_terminal_state
-    escape("?47l")
+    escape("?1049l")
   end
 
   def cursor_up(n)

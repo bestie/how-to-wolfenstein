@@ -26,7 +26,7 @@ class Game
   def start
     start_input_thread
 
-    io.write(ANSI.save_and_clear_terminal + ANSI.hide_cursor)
+    io.write(ANSI.save_terminal_state + ANSI.hide_cursor)
     @canvas_size = io.winsize
 
     until @over do

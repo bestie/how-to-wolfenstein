@@ -32,12 +32,11 @@ RSpec.describe Game do
   let(:turn_rate) { π/8.0 }
 
   context "on game start" do
-    it "saves the terminal state and hides the cursor" do
+    it "hides the cursor and saves the terminal state" do
       start_game
 
-      expect(io.screen_buffer.first).to eq(
-        ANSI.save_and_clear_terminal + ANSI.hide_cursor
-      )
+      expect(io.screen_buffer.first).to include(ANSI.hide_cursor)
+      expect(io.screen_buffer.first).to include(ANSI.save_terminal_state)
     end
 
     it "places the player in the map's start position" do
