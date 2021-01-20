@@ -19,7 +19,7 @@ RSpec.describe Game do
 
   let(:io) { MockIO.new(width: width, height: height) }
   let(:maps) { [map] }
-  let(:player) { Player.new(speed: speed, angle: current_angle, position: current_position) }
+  let(:player) { Player.new(speed: speed, turn_rate: turn_rate, angle: current_angle, position: current_position) }
   let(:renderer) { double(:renderer, call: frame) }
 
   let(:map) { Map.from_string(level_string) }
@@ -29,6 +29,7 @@ RSpec.describe Game do
   let(:width) { 20 }
   let(:height) { 20 }
   let(:speed) { 1 }
+  let(:turn_rate) { π/8.0 }
 
   context "on game start" do
     it "saves the terminal state and hides the cursor" do
