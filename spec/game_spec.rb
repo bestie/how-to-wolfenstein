@@ -99,7 +99,7 @@ RSpec.describe Game do
 
         expect { io.type_char("w") }
           .to change { player.position.x }
-          .by(1.0)
+          .by(speed)
       end
     end
 
@@ -109,7 +109,7 @@ RSpec.describe Game do
 
         expect {  io.type_char("a") }
           .to change { player.position.y }
-          .by(-1.0)
+          .by(-speed)
       end
     end
 
@@ -119,7 +119,7 @@ RSpec.describe Game do
 
         expect { io.type_char("s") }
           .to change { player.position.x }
-          .by(-1.0)
+          .by(-speed)
       end
     end
 
@@ -129,7 +129,7 @@ RSpec.describe Game do
 
         expect { io.type_char("d") }
           .to change { player.position.y }
-          .by(1.0)
+          .by(speed)
       end
     end
 
@@ -142,7 +142,7 @@ RSpec.describe Game do
           io.type_char("[")
           io.type_char("C")
         }.to change { player.angle }
-          .by(π/8.0)
+          .by(turn_rate)
       end
     end
 
@@ -155,7 +155,7 @@ RSpec.describe Game do
           io.type_char("[")
           io.type_char("D")
         }.to change { player.angle }
-          .by(-π/8.0)
+          .by(-turn_rate)
       end
     end
 
@@ -218,7 +218,7 @@ RSpec.describe Game do
 
       allow_game_thread_to_run
 
-      expect(io.current_output).to include("\u{1F645} ")
+      expect(io.current_output).to match(win_screen)
     end
 
     context "when there is a next level" do
@@ -237,18 +237,18 @@ RSpec.describe Game do
 
         allow_game_thread_to_run
 
-        expect(io.current_output).to include("\u{1F645} ")
+        expect(io.current_output).to match(win_screen)
 
-        io.type_char("f")
+        io.type_char("f") # to pay respect (any input is fine here)
         allow_game_thread_to_run
 
-        expect(io.current_output).not_to include("\u{1F645} ")
+        expect(io.current_output).not_to match(win_screen)
 
         move_to_goal2
 
         allow_game_thread_to_run
 
-        expect(io.current_output).to include("\u{1F645} ")
+        expect(io.current_output).to match(win_screen)
       end
 
       def move_to_goal2
@@ -478,4 +478,8 @@ RSpec.describe Game do
     #       #
     #########
   LEVEL
+
+  def win_screen
+    include("\u{1F645} ")
+  end
 end

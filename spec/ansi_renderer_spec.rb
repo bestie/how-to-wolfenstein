@@ -28,47 +28,52 @@ RSpec.describe ANSIRenderer do
   it "returns a 2D character array the size of the canvas" do
     scene = renderer.call
 
-    expect(scene.length).to eq(canvas_height)
-    expect(scene.map(&:length).uniq).to eq([canvas_width])
+    height = scene.length
+    widths = scene.map(&:length).uniq
+    raise "Scene contains uneven widths" if widths.length > 1
+    width = widths.fetch(0)
+
+    expect([width, height]).to eq([canvas_width, canvas_height])
   end
 
-  it "traces the wall distance column" do
+  it "measures the wall distance once for each column" do
     renderer.call
 
     expect(tracer).to have_received(:wall_position)
       .exactly(canvas_width).times
   end
 
-  it "traces the wall distance for each angle in field of view" do
+  it "measures the wall distance for the full range of the field of view" do
     angles = []
-    allow(tracer).to receive(:wall_position) do |**args|
+    allow(tracer).to receive(:wall_position) do |args|
       angles.push(args.fetch(:angle))
       wall_position
     end
 
     renderer.call
 
-    expect(angles.first).to eq(-π/4.0)
-    expect(angles.last).to eq(π/4.0)
+    aggregate_failures do
+      expect(angles.first).to eq(-π/4.0)
+      expect(angles.last).to eq(π/4.0)
+    end
   end
 
   context "when the column's distance is 4.5" do
     let(:distance_to_wall) { 4.5 }
-    let(:floor_size) { 7 }
+    let(:floor_size) { 11 }
     let(:wall_size) { canvas_height - floor_size * 2 }
 
     it "renders the visible wall vertical center" do
       scene = renderer.call
-      column = scene.transpose[0]
+      column = center_column(scene)
 
-      wall_rendering = [ANSI.red("@")] * wall_size
-
-      expect(column.drop(floor_size).take(wall_size)).to eq(wall_rendering)
+      expect(column.drop(floor_size).take(wall_size))
+        .to match([any_wall_char] * wall_size)
     end
 
     it "renders the ceiling and floor the same size" do
       scene = renderer.call
-      column = scene.transpose[0]
+      column = center_column(scene)
 
       floor_rendering = [" "] * floor_size
       ceiling_rendering = ["."] * floor_size
@@ -83,9 +88,9 @@ RSpec.describe ANSIRenderer do
 
     it "renders only wall" do
       scene = renderer.call
-      column = scene.transpose[0]
+      column = center_column(scene)
 
-      expect(column).to eq([ANSI.black_on_red("#")] * 40)
+      expect(column).to match([any_wall_char] * 40)
     end
   end
 
@@ -94,29 +99,29 @@ RSpec.describe ANSIRenderer do
 
     it "renders only wall" do
       scene = renderer.call
-      column = scene.transpose[0]
+      column = center_column(scene)
 
-      expect(column).to eq([ANSI.black_on_red(" ")] * 40)
+      expect(column).to match([any_wall_char] * 40)
     end
   end
 
   context "when that column's distance is max drawing distance" do
     let(:wall_position) { Vector[0.0, 10.0] }
 
-    xit "renders the visible wall vertical center" do
+    it "renders the visible wall vertical center" do
       scene = renderer.call
-      column = scene.transpose[0]
+      column = center_column(scene)
 
       expect(count_wall_chars(column)).to eq(8)
     end
   end
 
   context "when that column's distance is beyond max drawing distance" do
-    let(:wall_position) { Vector[0.0, 10.1] }
+    let(:wall_position) { Vector[0.0, 10.4] }
 
-    xit "renders the no wall" do
+    it "renders the no wall" do
       scene = renderer.call
-      column = scene.transpose[0]
+      column = center_column(scene)
 
       expect(count_wall_chars(column)).to eq(0)
     end
@@ -129,9 +134,9 @@ RSpec.describe ANSIRenderer do
       allow(map).to receive(:goal?).and_return(true)
 
       scene = renderer.call
-      column = scene.transpose[0]
+      column = center_column(scene)
 
-      expect(column).to include(ANSI.black_on_green("+"))
+      expect(column).to include(black_on_green_char)
     end
   end
 
@@ -154,8 +159,6 @@ RSpec.describe ANSIRenderer do
       it "renders all wall columns the same height" do
         scene = renderer.call
 
-        puts scene.map(&:join)
-
         wall_heights = scene.transpose.map { |col| count_wall_chars(col) }
         expect(wall_heights.uniq).to eq([22])
       end
@@ -164,5 +167,26 @@ RSpec.describe ANSIRenderer do
 
   def count_wall_chars(column)
     column.count { |char| ANSIRenderer::WALL_GRADIENT.include?(char) }
+  end
+
+  def center_column(scene)
+    columns = scene.transpose
+    columns[columns.length / 2]
+  end
+
+  def black_on_green_char
+    starting_with("\e[42;30m")
+  end
+
+  def any_wall_char
+    chars = ANSIRenderer::WALL_GRADIENT
+
+    chars.reduce(eq(chars.first)) { |agg, char|
+      agg.or(eq(char))
+    }
+  end
+
+  def print_scene(scene)
+    scene.each { |l| puts(l.join) }
   end
 end
